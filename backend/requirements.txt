@@ -1,0 +1,25 @@
+# SentinelLLM backend runtime dependencies.
+# PyTorch is installed separately (CPU wheel by default, see README) so the
+# same file works for CPU and GPU deployments.
+
+# --- API / infrastructure ---
+fastapi>=0.115
+uvicorn[standard]>=0.30
+pydantic>=2.7
+pydantic-settings>=2.3
+sqlalchemy[asyncio]>=2.0.30
+asyncpg>=0.29
+aiosqlite>=0.20
+alembic>=1.13
+redis>=5.0
+httpx>=0.27
+pyyaml>=6.0
+cryptography>=42
+jsonschema>=4.22
+
+# --- detection / ML ---
+transformers>=4.44
+presidio-analyzer>=2.2.355
+spacy>=3.7,<3.9
+scikit-learn>=1.5
+numpy>=1.26

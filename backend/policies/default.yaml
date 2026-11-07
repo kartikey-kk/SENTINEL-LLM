@@ -1,0 +1,181 @@
+# SentinelLLM default security policy.
+# Every section can be updated at runtime via PUT /api/v1/policies/{section}
+# (admin key required). Updates are validated, versioned and audited.
+
+version: 1
+
+prompt_injection:
+  enabled: true
+  threshold: 0.80
+  action: BLOCK
+  on_error: BLOCK               # fail closed
+  mode: hybrid
+  verify_band: [0.50, 0.80]     # uncertain scores get escalate-only LLM verification
+  # Classifier trust when no deterministic rule corroborates it. 0.79 keeps an uncorroborated
+  # classifier score just below the 0.80 threshold, so ML-only findings are routed to escalate-only
+  # verification instead of blocking outright (the injection model is over-confident on some benign
+  # text, e.g. p=0.998 for a plain PII sentence). Stricter profiles can still block on ML alone.
+  ml_weight: 0.79
+
+jailbreak:
+  enabled: true
+  threshold: 0.80
+  action: BLOCK
+  on_error: BLOCK
+  mode: hybrid
+  verify_band: [0.50, 0.80]
+  ml_weight: 0.60               # jailbreak classifier is noisier on benign prompts; see docs/EVALUATION.md
+
+pii:
+  enabled: true
+  action: REDACT
+  on_error: BLOCK
+  score_threshold: 0.40
+  entity_thresholds:
+    US_DRIVER_LICENSE: 0.65
+    US_BANK_NUMBER: 0.60
+    US_PASSPORT: 0.60
+    IN_PASSPORT: 0.60
+    IN_VOTER: 0.60
+    PERSON: 0.70
+  entities: []                  # empty = all default entity types
+  block_entities: []            # e.g. [US_SSN] to block instead of redact
+  allow_list: []
+  custom_entities:
+    - name: EMPLOYEE_ID
+      patterns:
+        - regex: "\\bEMP-\\d{6}\\b"
+          score: 0.85
+      context: [employee, staff, badge]
+      sensitivity: 0.6
+  allow_restoration: false      # placeholders are never restored unless enabled AND requested
+  restoration_ttl_seconds: 900
+
+secret_detection:
+  enabled: true
+  action: BLOCK                 # BLOCK or REDACT only
+  on_error: BLOCK
+  entropy: true
+  min_weight: 0.60
+
+toxicity:
+  enabled: true
+  threshold: 0.85
+  action: VERIFY
+  on_error: ALLOW
+
+risk:
+  weights:                      # R = 0.40P + 0.25J + 0.20S + 0.15T
+    prompt_injection: 0.40
+    jailbreak: 0.25
+    sensitive_data: 0.20
+    toxicity: 0.15
+  block_threshold: 0.85
+  verify_threshold: 0.60
+  critical_override: true       # averaging never suppresses a detected critical finding
+  critical_floor: 0.95
+
+verification:
+  enabled: true
+  provider: ollama              # local verifier by default; cloud only if explicitly configured
+  # Judge model. In a 10-case probe qwen2.5:3b labelled almost everything malicious (5/10) while
+  # qwen3:4b-instruct scored 9/10 (docs/EVALUATION.md). If the model is not installed the verifier
+  # reports "unavailable" and on_unavailable applies.  Install: ollama pull qwen3:4b-instruct
+  model: qwen3:4b-instruct
+  escalate_only: true
+  min_confidence_to_escalate: 0.70
+  on_unavailable: HUMAN_REVIEW
+  timeout_seconds: 30
+
+providers:
+  allowed_providers: [ollama, openai_compatible]
+  cloud_requires_pii_redaction: true
+  cloud_block_secrets: true
+  allow_cloud_fallback: false
+  max_output_tokens: 1024
+  temperature: 0.2
+
+output:
+  enabled: true
+  pii_action: REDACT
+  secret_action: BLOCK
+  toxicity_threshold: 0.85
+  toxicity_action: BLOCK
+  unsafe_html_action: REDACT
+  system_prompt_leak_action: BLOCK
+  invalid_structure_action: BLOCK
+  blocked_patterns: []
+  blocked_pattern_action: BLOCK
+  grounding_min_support: 0.0    # >0 enables lexical evidence-overlap checks
+  grounding_action: ALLOW
+  injection_echo_threshold: 0.90
+
+context:
+  enabled: true
+  threshold: 0.60
+  mode: hybrid
+  chunk_action: DROP            # DROP | SANITIZE | FLAG
+  block_request_if_flagged: false
+  max_chunks: 20
+  max_chunk_chars: 20000
+  scan_pii: true
+
+tools:
+  enabled: true
+  default_deny: true
+  scan_arguments: true
+  tools:
+    get_weather:
+      description: Return simulated weather for a city
+      permission: read
+      args:
+        city: {type: string, max_length: 80, pattern: "^[A-Za-z .'-]+$"}
+      max_calls_per_session: 30
+    search_docs:
+      description: Search a small built-in knowledge base
+      permission: read
+      args:
+        query: {type: string, max_length: 300}
+        top_k: {type: integer, required: false, minimum: 1, maximum: 10}
+    calculator:
+      description: Evaluate an arithmetic expression (safe AST evaluator, no eval)
+      permission: read
+      args:
+        expression: {type: string, max_length: 200, pattern: "^[0-9+\\-*/(). %]+$"}
+    send_email:
+      description: Simulated email sender (records the message, never sends)
+      permission: write
+      requires_approval: true
+      allowed_scopes: [support_agent]
+      args:
+        to: {type: string, max_length: 254, pattern: "^[^@\\s]+@example\\.(com|org)$"}
+        subject: {type: string, max_length: 200}
+        body: {type: string, max_length: 5000}
+      max_calls_per_session: 3
+    delete_records:
+      description: Simulated destructive operation - disabled by default
+      enabled: false
+      permission: write
+      requires_approval: true
+      allowed_scopes: [admin]
+      args:
+        table: {type: enum, enum: [tickets, drafts]}
+        ids: {type: string, max_length: 200, pattern: "^[0-9,]+$"}
+      max_calls_per_session: 1
+
+context_profiles:
+  general_chat:
+    description: Default consumer chat assistant
+  security_research:
+    description: Internal red-team / security education assistant. Attack discussion is expected,
+      so injection/jailbreak thresholds are raised moderately (bounded; never disabled).
+    threshold_multipliers: {prompt_injection: 1.15, jailbreak: 1.15}
+  code_assistant:
+    description: Coding assistant. Credential leakage weighs more heavily.
+    weight_overrides: {prompt_injection: 0.35, jailbreak: 0.15, sensitive_data: 0.40, toxicity: 0.10}
+  customer_support:
+    description: Customer-facing support bot. Stricter injection and toxicity handling.
+    threshold_multipliers: {prompt_injection: 0.85, jailbreak: 0.85, toxicity: 0.85}
+  healthcare:
+    description: Health information assistant. Personal data weighs more heavily.
+    weight_overrides: {prompt_injection: 0.35, jailbreak: 0.20, sensitive_data: 0.35, toxicity: 0.10}

@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Local data
+*.db
+*.sqlite
+models_cache/
+datasets/raw/
+backend/data/
+
+# Node
+node_modules/
+frontend/dist/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Optional offline wheelhouse for Docker builds
+backend/wheelhouse/*.whl
+
+# Processed eval data contains third-party text (InjecAgent, AgentDojo, garak, Dolly);
+# regenerate with experiments/build_dataset.py. The manifest (with sha256) is committed.
+datasets/processed/*.jsonl

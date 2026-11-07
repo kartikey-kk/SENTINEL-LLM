@@ -1,0 +1,344 @@
+{
+  "kind": "detector_eval",
+  "created_at": "2026-11-07T08:38:31.421668+00:00",
+  "environment": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26300-SP0",
+    "processor": "Intel64 Family 6 Model 151 Stepping 2, GenuineIntel",
+    "torch": "2.15.0+cpu",
+    "transformers": "5.22.2",
+    "device": "cpu"
+  },
+  "dataset": {
+    "name": "sentinel_eval_v1",
+    "split": "test",
+    "sha256": "c882fae9fc5c91d4c106e8871c10f136a7bcddfec2d76ee2e4a5a0e69d7d8582",
+    "n_samples": 991,
+    "n_attack": 652,
+    "n_benign": 339
+  },
+  "rows": [
+    {
+      "detector": "prompt_injection",
+      "mode": "rules",
+      "n": 319,
+      "metrics": {
+        "tp": 35,
+        "fp": 1,
+        "fn": 81,
+        "tn": 202,
+        "precision": 0.9722,
+        "recall": 0.3017,
+        "f1": 0.4605,
+        "fpr": 0.0049,
+        "fnr": 0.6983,
+        "accuracy": 0.7429
+      }
+    },
+    {
+      "detector": "prompt_injection",
+      "mode": "ml",
+      "n": 319,
+      "metrics": {
+        "tp": 103,
+        "fp": 0,
+        "fn": 13,
+        "tn": 203,
+        "precision": 1.0,
+        "recall": 0.8879,
+        "f1": 0.9406,
+        "fpr": 0.0,
+        "fnr": 0.1121,
+        "accuracy": 0.9592
+      }
+    },
+    {
+      "detector": "prompt_injection",
+      "mode": "hybrid",
+      "n": 319,
+      "metrics": {
+        "tp": 65,
+        "fp": 1,
+        "fn": 51,
+        "tn": 202,
+        "precision": 0.9848,
+        "recall": 0.5603,
+        "f1": 0.7143,
+        "fpr": 0.0049,
+        "fnr": 0.4397,
+        "accuracy": 0.837
+      }
+    },
+    {
+      "detector": "jailbreak",
+      "mode": "rules",
+      "n": 442,
+      "metrics": {
+        "tp": 107,
+        "fp": 3,
+        "fn": 132,
+        "tn": 200,
+        "precision": 0.9727,
+        "recall": 0.4477,
+        "f1": 0.6132,
+        "fpr": 0.0148,
+        "fnr": 0.5523,
+        "accuracy": 0.6946
+      }
+    },
+    {
+      "detector": "jailbreak",
+      "mode": "ml",
+      "n": 442,
+      "metrics": {
+        "tp": 221,
+        "fp": 1,
+        "fn": 18,
+        "tn": 202,
+        "precision": 0.9955,
+        "recall": 0.9247,
+        "f1": 0.9588,
+        "fpr": 0.0049,
+        "fnr": 0.0753,
+        "accuracy": 0.957
+      }
+    },
+    {
+      "detector": "jailbreak",
+      "mode": "hybrid",
+      "n": 442,
+      "metrics": {
+        "tp": 154,
+        "fp": 3,
+        "fn": 85,
+        "tn": 200,
+        "precision": 0.9809,
+        "recall": 0.6444,
+        "f1": 0.7778,
+        "fpr": 0.0148,
+        "fnr": 0.3556,
+        "accuracy": 0.8009
+      }
+    },
+    {
+      "detector": "any_attack",
+      "mode": "rules",
+      "n": 558,
+      "metrics": {
+        "tp": 177,
+        "fp": 4,
+        "fn": 178,
+        "tn": 199,
+        "precision": 0.9779,
+        "recall": 0.4986,
+        "f1": 0.6604,
+        "fpr": 0.0197,
+        "fnr": 0.5014,
+        "accuracy": 0.6738
+      }
+    },
+    {
+      "detector": "any_attack",
+      "mode": "ml",
+      "n": 558,
+      "metrics": {
+        "tp": 342,
+        "fp": 1,
+        "fn": 13,
+        "tn": 202,
+        "precision": 0.9971,
+        "recall": 0.9634,
+        "f1": 0.9799,
+        "fpr": 0.0049,
+        "fnr": 0.0366,
+        "accuracy": 0.9749
+      }
+    },
+    {
+      "detector": "any_attack",
+      "mode": "hybrid",
+      "n": 558,
+      "metrics": {
+        "tp": 239,
+        "fp": 4,
+        "fn": 116,
+        "tn": 199,
+        "precision": 0.9835,
+        "recall": 0.6732,
+        "f1": 0.7993,
+        "fpr": 0.0197,
+        "fnr": 0.3268,
+        "accuracy": 0.7849
+      }
+    },
+    {
+      "detector": "context",
+      "mode": "rules",
+      "n": 350,
+      "metrics": {
+        "tp": 144,
+        "fp": 0,
+        "fn": 120,
+        "tn": 86,
+        "precision": 1.0,
+        "recall": 0.5455,
+        "f1": 0.7059,
+        "fpr": 0.0,
+        "fnr": 0.4545,
+        "accuracy": 0.6571
+      }
+    },
+    {
+      "detector": "context",
+      "mode": "ml",
+      "n": 350,
+      "metrics": {
+        "tp": 213,
+        "fp": 25,
+        "fn": 51,
+        "tn": 61,
+        "precision": 0.895,
+        "recall": 0.8068,
+        "f1": 0.8486,
+        "fpr": 0.2907,
+        "fnr": 0.1932,
+        "accuracy": 0.7829
+      }
+    },
+    {
+      "detector": "context",
+      "mode": "hybrid",
+      "n": 350,
+      "metrics": {
+        "tp": 222,
+        "fp": 25,
+        "fn": 42,
+        "tn": 61,
+        "precision": 0.8988,
+        "recall": 0.8409,
+        "f1": 0.8689,
+        "fpr": 0.2907,
+        "fnr": 0.1591,
+        "accuracy": 0.8086
+      }
+    },
+    {
+      "detector": "secret_detection",
+      "mode": "rules+entropy",
+      "n": 215,
+      "metrics": {
+        "tp": 12,
+        "fp": 0,
+        "fn": 0,
+        "tn": 203,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "fpr": 0.0,
+        "fnr": 0.0,
+        "accuracy": 1.0
+      }
+    },
+    {
+      "detector": "toxicity",
+      "mode": "ml",
+      "n": 224,
+      "metrics": {
+        "tp": 20,
+        "fp": 0,
+        "fn": 1,
+        "tn": 203,
+        "precision": 1.0,
+        "recall": 0.9524,
+        "f1": 0.9756,
+        "fpr": 0.0,
+        "fnr": 0.0476,
+        "accuracy": 0.9955
+      }
+    },
+    {
+      "detector": "pii",
+      "mode": "presidio",
+      "n": 50,
+      "metrics": {
+        "value_recall": 0.8,
+        "values": 130,
+        "false_entities_per_benign_sample": 0.8424,
+        "recall": 0.8,
+        "recall_by_type": {
+          "CREDIT_CARD": 0.1,
+          "EMAIL_ADDRESS": 1.0,
+          "IBAN_CODE": 1.0,
+          "IN_AADHAAR": 0.0,
+          "IN_PAN": 0.3,
+          "IP_ADDRESS": 1.0,
+          "PERSON": 1.0,
+          "PHONE_NUMBER": 1.0
+        }
+      }
+    },
+    {
+      "detector": "pii",
+      "mode": "regex_fallback",
+      "n": 50,
+      "metrics": {
+        "value_recall": 0.6923,
+        "values": 130,
+        "false_entities_per_benign_sample": 0.0,
+        "recall": 0.6923,
+        "recall_by_type": {
+          "CREDIT_CARD": 1.0,
+          "EMAIL_ADDRESS": 1.0,
+          "IBAN_CODE": 1.0,
+          "IN_AADHAAR": 1.0,
+          "IN_PAN": 1.0,
+          "IP_ADDRESS": 1.0,
+          "PERSON": 0.0,
+          "PHONE_NUMBER": 0.0
+        }
+      }
+    },
+    {
+      "detector": "sklearn_tfidf_lr",
+      "mode": "trained",
+      "n": 958,
+      "metrics": {
+        "tp": 259,
+        "fp": 1,
+        "fn": 360,
+        "tn": 338,
+        "precision": 0.9962,
+        "recall": 0.4184,
+        "f1": 0.5893,
+        "fpr": 0.0029,
+        "fnr": 0.5816,
+        "accuracy": 0.6232
+      }
+    }
+  ],
+  "thresholds": {
+    "prompt_injection": 0.8,
+    "jailbreak": 0.8,
+    "toxicity": 0.85,
+    "context": 0.6
+  },
+  "summary": {
+    "prompt_injection/rules": 0.4605,
+    "prompt_injection/ml": 0.9406,
+    "prompt_injection/hybrid": 0.7143,
+    "jailbreak/rules": 0.6132,
+    "jailbreak/ml": 0.9588,
+    "jailbreak/hybrid": 0.7778,
+    "any_attack/rules": 0.6604,
+    "any_attack/ml": 0.9799,
+    "any_attack/hybrid": 0.7993,
+    "context/rules": 0.7059,
+    "context/ml": 0.8486,
+    "context/hybrid": 0.8689,
+    "secret_detection/rules+entropy": 1.0,
+    "toxicity/ml": 0.9756,
+    "pii/presidio": null,
+    "pii/regex_fallback": null,
+    "sklearn_tfidf_lr/trained": 0.5893
+  }
+}

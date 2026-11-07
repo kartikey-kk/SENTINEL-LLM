@@ -1,0 +1,86 @@
+# SentinelLLM stack: FastAPI gateway, React console, PostgreSQL, Redis.
+#
+#   docker compose up -d --build                 # gateway + console + postgres + redis (Ollama on the host)
+#   docker compose --profile ollama up -d        # also run Ollama in a container (CPU)
+#   docker compose -f docker-compose.yml -f docker-compose.gpu.yml --profile ollama up -d   # Ollama on NVIDIA GPU
+#
+# Secrets come from .env (see .env.example). Only the console (8080) and API (8000) are published,
+# and only on 127.0.0.1. PostgreSQL and Redis are reachable on the internal network only.
+
+name: sentinelllm
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: sentinel
+      POSTGRES_DB: sentinel
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sentinel -d sentinel"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "128mb", "--maxmemory-policy", "volatile-ttl"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      args:
+        TORCH_INDEX: ${TORCH_INDEX:-https://download.pytorch.org/whl/cpu}
+    env_file: .env
+    environment:
+      SENTINEL_ENV: ${SENTINEL_ENV:-production}
+      SENTINEL_DATABASE_URL: postgresql+asyncpg://sentinel:${POSTGRES_PASSWORD}@postgres:5432/sentinel
+      SENTINEL_REDIS_URL: redis://redis:6379/0
+      SENTINEL_REDIS_OPTIONAL: "false"
+      SENTINEL_OLLAMA_BASE_URL: ${SENTINEL_OLLAMA_URL_DOCKER:-http://host.docker.internal:11434}
+      SENTINEL_CORS_ORIGINS: ""
+      HF_HOME: /models
+      HF_HUB_OFFLINE: ${HF_HUB_OFFLINE:-0}
+    volumes:
+      - ./models_cache:/models
+      - ./experiments/results:/experiments/results:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "127.0.0.1:8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    profiles: ["ollama"]
+    volumes:
+      - ollama:/root/.ollama
+    ports:
+      - "127.0.0.1:11434:11434"
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  ollama:

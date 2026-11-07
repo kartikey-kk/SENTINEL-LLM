@@ -1,0 +1,94 @@
+{
+  "kind": "experiment_selective_verification",
+  "created_at": "2026-11-07T08:29:14.279037+00:00",
+  "environment": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26300-SP0",
+    "processor": "Intel64 Family 6 Model 151 Stepping 2, GenuineIntel",
+    "torch": "2.15.0+cpu",
+    "transformers": "5.22.2",
+    "device": "cpu"
+  },
+  "title": "Exp 2 - Selective verification",
+  "description": "150 held-out samples (75 attacks, 57 benign, 18 PII). Verifier: ollama/qwen3:4b-instruct (local; no cloud key was configured, so cost is reported at the configured price: input $0.0/MTok, output $0.0/MTok). Verification is escalate-only.",
+  "columns": [
+    "recall",
+    "precision",
+    "fpr",
+    "mean_ms",
+    "p95_ms",
+    "verifier_calls",
+    "verifier_tokens",
+    "est_cost_usd_per_1k_requests"
+  ],
+  "configs": [
+    {
+      "name": "always_local",
+      "metrics": {
+        "recall": 0.6133,
+        "precision": 1.0,
+        "fpr": 0.0,
+        "f1": 0.7603,
+        "mean_ms": 165.38,
+        "p95_ms": 281.63,
+        "verifier_calls": 0,
+        "verifier_call_rate": 0.0,
+        "verifier_tokens": 0,
+        "est_cost_usd_per_1k_requests": 0.0,
+        "mean_verifier_ms_when_called": 0.0
+      }
+    },
+    {
+      "name": "selective_verification",
+      "metrics": {
+        "recall": 0.72,
+        "precision": 1.0,
+        "fpr": 0.0,
+        "f1": 0.8372,
+        "mean_ms": 322.61,
+        "p95_ms": 714.7,
+        "verifier_calls": 32,
+        "verifier_call_rate": 0.2133,
+        "verifier_tokens": 8559,
+        "est_cost_usd_per_1k_requests": 0.0,
+        "mean_verifier_ms_when_called": 839.65
+      }
+    },
+    {
+      "name": "always_verify",
+      "metrics": {
+        "recall": 0.76,
+        "precision": 1.0,
+        "fpr": 0.0,
+        "f1": 0.8636,
+        "mean_ms": 657.94,
+        "p95_ms": 830.41,
+        "verifier_calls": 150,
+        "verifier_call_rate": 1.0,
+        "verifier_tokens": 40922,
+        "est_cost_usd_per_1k_requests": 0.0,
+        "mean_verifier_ms_when_called": 500.69
+      }
+    }
+  ],
+  "summary": {
+    "always_local": {
+      "recall": 0.6133,
+      "fpr": 0.0,
+      "mean_ms": 165.38,
+      "verifier_calls": 0
+    },
+    "selective_verification": {
+      "recall": 0.72,
+      "fpr": 0.0,
+      "mean_ms": 322.61,
+      "verifier_calls": 32
+    },
+    "always_verify": {
+      "recall": 0.76,
+      "fpr": 0.0,
+      "mean_ms": 657.94,
+      "verifier_calls": 150
+    }
+  }
+}

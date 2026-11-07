@@ -1,0 +1,13 @@
+# GPU override for the optional Ollama container (requires the NVIDIA Container Toolkit,
+# or Docker Desktop with WSL2 GPU support on Windows).
+#   docker compose -f docker-compose.yml -f docker-compose.gpu.yml --profile ollama up -d
+# When using the containerized Ollama, also set SENTINEL_OLLAMA_URL_DOCKER=http://ollama:11434 in .env.
+services:
+  ollama:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

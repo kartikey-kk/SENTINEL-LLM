@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+/* SentinelLLM console theme: dark SOC palette, restrained accents.
+   System font stacks only - the console makes no third-party requests. */
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", "SF Mono", Consolas, monospace;
+
+  --color-canvas: #080b12;
+  --color-panel: #0e131d;
+  --color-panel-2: #131a27;
+  --color-line: #1e2636;
+  --color-line-strong: #2a3446;
+  --color-ink: #e6ebf2;
+  --color-ink-2: #a3aec0;
+  --color-ink-3: #6b778b;
+  --color-accent: #38bdf8;
+  --color-accent-dim: #0c4a6e;
+
+  --color-allow: #34d399;
+  --color-redact: #fbbf24;
+  --color-verify: #60a5fa;
+  --color-review: #a78bfa;
+  --color-block: #f87171;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "tnum" 1, "cv11" 1;
+}
+
+::selection {
+  background: rgb(56 189 248 / 0.3);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2a3446 transparent;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.recharts-cartesian-grid line {
+  stroke: #1e2636;
+}
+
+.recharts-text {
+  fill: #6b778b;
+  font-size: 11px;
+}
+
+.recharts-default-tooltip {
+  background: #0e131d !important;
+  border: 1px solid #2a3446 !important;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+input[type="range"] {
+  accent-color: var(--color-accent);
+}

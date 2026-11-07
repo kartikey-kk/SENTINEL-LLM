@@ -1,0 +1,84 @@
+{
+  "kind": "acceptance",
+  "created_at": "2026-11-07T09:58:22.491996+00:00",
+  "target": "127.0.0.1",
+  "results": [
+    {
+      "test": 1,
+      "name": "Benign prompt receives an LLM response",
+      "status": "PASS",
+      "detail": "decision=ALLOW reply='Machine learning is a subset of artificial intelligence that'"
+    },
+    {
+      "test": 2,
+      "name": "Direct prompt injection blocked",
+      "status": "PASS",
+      "detail": "decision=BLOCK llm_called=False"
+    },
+    {
+      "test": 3,
+      "name": "PII redacted before cloud transmission",
+      "status": "PASS",
+      "detail": "sent='Write a one-line note to [EMAIL_1] (phone [PHONE_1]) confirming her refund.'"
+    },
+    {
+      "test": 4,
+      "name": "Synthetic API key detected and not leaked",
+      "status": "PASS",
+      "detail": "decision=BLOCK key_in_audit=False"
+    },
+    {
+      "test": 5,
+      "name": "Sensitive model output blocked or redacted",
+      "status": "PASS",
+      "detail": "pii_output=REDACT secret_output=BLOCK"
+    },
+    {
+      "test": 6,
+      "name": "Unauthorized simulated tool call rejected",
+      "status": "PASS",
+      "detail": "tool is disabled by policy; scope 'default' is not permitted for this tool; write permission not gra"
+    },
+    {
+      "test": 7,
+      "name": "Policy changed through the administrative interface",
+      "status": "PASS",
+      "detail": "v3->v4, invalid change rejected=True"
+    },
+    {
+      "test": 8,
+      "name": "Every security decision generates an auditable event",
+      "status": "PASS",
+      "detail": "7/7 decisions found in audit log"
+    },
+    {
+      "test": 9,
+      "name": "Works with a local Ollama model",
+      "status": "PASS",
+      "detail": "ollama status=ok model=qwen2.5:3b"
+    },
+    {
+      "test": 10,
+      "name": "Works with a configured cloud LLM API",
+      "status": "PASS",
+      "detail": "endpoint host=host.docker.internal:11434 model=qwen2.5:3b"
+    },
+    {
+      "test": 11,
+      "name": "Evaluation scripts calculate real metrics",
+      "status": "PASS",
+      "detail": "firewall_comparison_20261107T091714Z.json: n=991, hybrid_verify F1=0.9034"
+    },
+    {
+      "test": 12,
+      "name": "Docker deployment starts successfully",
+      "status": "PASS",
+      "detail": "status=ok db=ok kv=redis"
+    }
+  ],
+  "summary": {
+    "PASS": 12,
+    "FAIL": 0,
+    "SKIP": 0
+  }
+}

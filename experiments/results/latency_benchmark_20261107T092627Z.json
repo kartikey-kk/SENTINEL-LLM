@@ -1,0 +1,121 @@
+{
+  "kind": "latency_benchmark",
+  "created_at": "2026-11-07T09:26:27.427277+00:00",
+  "environment": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26300-SP0",
+    "processor": "Intel64 Family 6 Model 151 Stepping 2, GenuineIntel",
+    "torch": "2.15.0+cpu",
+    "transformers": "5.22.2",
+    "device": "cpu"
+  },
+  "dataset": {
+    "name": "sentinel_eval_v1.1",
+    "split": "test",
+    "sha256": "eb05393d6ce1fea6398fc0e64cbd59ea512cc43e8b7bc07927595e19ef8cc4c5",
+    "n_samples": 200,
+    "n_attack": 116,
+    "n_benign": 84
+  },
+  "samples": 200,
+  "detectors_run": "sequentially per sample (the pipeline runs them concurrently with bounded inference concurrency)",
+  "stats": {
+    "normalizer": {
+      "n": 200,
+      "mean_ms": 1.25,
+      "p50_ms": 0.29,
+      "p95_ms": 5.06,
+      "p99_ms": 10.38
+    },
+    "prompt_injection": {
+      "n": 200,
+      "mean_ms": 300.32,
+      "p50_ms": 131.1,
+      "p95_ms": 1180.87,
+      "p99_ms": 1951.93
+    },
+    "jailbreak": {
+      "n": 200,
+      "mean_ms": 162.9,
+      "p50_ms": 45.87,
+      "p95_ms": 750.09,
+      "p99_ms": 1238.78
+    },
+    "pii": {
+      "n": 200,
+      "mean_ms": 59.01,
+      "p50_ms": 17.11,
+      "p95_ms": 231.36,
+      "p99_ms": 411.4
+    },
+    "secret_detection": {
+      "n": 200,
+      "mean_ms": 0.36,
+      "p50_ms": 0.13,
+      "p95_ms": 1.2,
+      "p99_ms": 1.81
+    },
+    "toxicity": {
+      "n": 200,
+      "mean_ms": 149.12,
+      "p50_ms": 41.77,
+      "p95_ms": 722.8,
+      "p99_ms": 1165.38
+    },
+    "pipeline_inprocess": {
+      "n": 200,
+      "mean_ms": 547.91,
+      "p50_ms": 172.99,
+      "p95_ms": 2817.13,
+      "p99_ms": 4356.19
+    },
+    "http_end_to_end": {
+      "n": 200,
+      "mean_ms": 580.53,
+      "p50_ms": 213.27,
+      "p95_ms": 2578.7,
+      "p99_ms": 4365.64
+    }
+  },
+  "pipeline_by_length": {
+    "short (<200 chars)": {
+      "n": 133,
+      "mean_ms": 161.05,
+      "p50_ms": 150.47,
+      "p95_ms": 248.47,
+      "p99_ms": 384.96
+    },
+    "long (>1000)": {
+      "n": 46,
+      "mean_ms": 1746.79,
+      "p50_ms": 1053.41,
+      "p95_ms": 4282.1,
+      "p99_ms": 7613.7
+    },
+    "medium (200-1000)": {
+      "n": 21,
+      "mean_ms": 371.85,
+      "p50_ms": 355.59,
+      "p95_ms": 534.69,
+      "p99_ms": 574.21
+    }
+  },
+  "http": {
+    "url_host": "127.0.0.1:8000",
+    "requests": 200,
+    "mean_ms": 580.53,
+    "p50_ms": 213.27,
+    "p95_ms": 2578.7,
+    "p99_ms": 4365.64
+  },
+  "summary": {
+    "normalizer": 5.06,
+    "prompt_injection": 1180.87,
+    "jailbreak": 750.09,
+    "pii": 231.36,
+    "secret_detection": 1.2,
+    "toxicity": 722.8,
+    "pipeline_inprocess": 2817.13,
+    "http_end_to_end": 2578.7
+  }
+}

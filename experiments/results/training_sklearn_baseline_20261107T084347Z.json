@@ -1,0 +1,22 @@
+{
+  "kind": "training_sklearn_baseline",
+  "created_at": "2026-11-07T08:43:47.027656+00:00",
+  "environment": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26300-SP0",
+    "processor": "Intel64 Family 6 Model 151 Stepping 2, GenuineIntel",
+    "torch": "2.15.0+cpu",
+    "transformers": "5.22.2",
+    "device": "cpu"
+  },
+  "model": "tfidf(word 1-2 + char 3-5) + logistic regression (class_weight=balanced)",
+  "train_samples": 261,
+  "train_positives": 45,
+  "validation_samples": 220,
+  "selected_C": 0.1,
+  "validation_f1": 0.6408,
+  "artifact": "models_cache\\sentinel_sklearn\\tfidf_lr.joblib",
+  "summary": {
+    "validation_f1": 0.6408
+  }
+}

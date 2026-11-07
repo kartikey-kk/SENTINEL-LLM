@@ -1,0 +1,126 @@
+{
+  "kind": "detector_eval_pii",
+  "created_at": "2026-11-07T08:40:35.042331+00:00",
+  "environment": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26300-SP0",
+    "processor": "Intel64 Family 6 Model 151 Stepping 2, GenuineIntel",
+    "torch": "2.15.0+cpu",
+    "transformers": "5.22.2",
+    "device": "cpu"
+  },
+  "results": {
+    "validation/presidio+checksum": {
+      "value_recall": 1.0,
+      "values": 80,
+      "samples": 40,
+      "recall_by_type": {
+        "EMAIL_ADDRESS": "30/30",
+        "PERSON": "20/20",
+        "PHONE_NUMBER": "10/10",
+        "US_SSN": "20/20"
+      },
+      "false_entities_per_benign_prompt": 0.3832,
+      "false_entity_types": {
+        "PERSON": 40,
+        "IN_PAN": 1
+      }
+    },
+    "validation/regex_fallback": {
+      "value_recall": 0.75,
+      "values": 80,
+      "samples": 40,
+      "recall_by_type": {
+        "EMAIL_ADDRESS": "30/30",
+        "PERSON": "0/20",
+        "PHONE_NUMBER": "10/10",
+        "US_SSN": "20/20"
+      },
+      "false_entities_per_benign_prompt": 0.0,
+      "false_entity_types": {}
+    },
+    "test/presidio+checksum": {
+      "value_recall": 0.9462,
+      "values": 130,
+      "samples": 50,
+      "recall_by_type": {
+        "CREDIT_CARD": "3/10",
+        "EMAIL_ADDRESS": "30/30",
+        "IBAN_CODE": "10/10",
+        "IN_AADHAAR": "10/10",
+        "IN_PAN": "10/10",
+        "IP_ADDRESS": "20/20",
+        "PERSON": "30/30",
+        "PHONE_NUMBER": "10/10"
+      },
+      "false_entities_per_benign_prompt": 0.8424,
+      "false_entity_types": {
+        "PERSON": 171
+      }
+    },
+    "test/regex_fallback": {
+      "value_recall": 0.6923,
+      "values": 130,
+      "samples": 50,
+      "recall_by_type": {
+        "CREDIT_CARD": "10/10",
+        "EMAIL_ADDRESS": "30/30",
+        "IBAN_CODE": "10/10",
+        "IN_AADHAAR": "10/10",
+        "IN_PAN": "10/10",
+        "IP_ADDRESS": "20/20",
+        "PERSON": "0/30",
+        "PHONE_NUMBER": "0/10"
+      },
+      "false_entities_per_benign_prompt": 0.0,
+      "false_entity_types": {}
+    }
+  },
+  "engine": {
+    "engine": "presidio",
+    "spacy_model": "en_core_web_md",
+    "error": null,
+    "supported_entities": [
+      "AGE",
+      "CREDIT_CARD",
+      "CRYPTO",
+      "DATE_TIME",
+      "EMAIL",
+      "EMAIL_ADDRESS",
+      "IBAN_CODE",
+      "ID",
+      "IN_AADHAAR",
+      "IN_PAN",
+      "IN_PASSPORT",
+      "IN_VOTER",
+      "IP_ADDRESS",
+      "LOCATION",
+      "MAC_ADDRESS",
+      "MEDICAL_LICENSE",
+      "NRP",
+      "ORGANIZATION",
+      "PERSON",
+      "PHONE_NUMBER",
+      "UK_NHS",
+      "URL",
+      "US_BANK_NUMBER",
+      "US_DRIVER_LICENSE",
+      "US_ITIN",
+      "US_PASSPORT",
+      "US_SSN",
+      "UUID"
+    ],
+    "unsupported_requested_entities": [],
+    "checksum_validators": [
+      "CREDIT_CARD",
+      "IBAN_CODE",
+      "IN_AADHAAR"
+    ]
+  },
+  "summary": {
+    "validation/presidio+checksum": 1.0,
+    "validation/regex_fallback": 0.75,
+    "test/presidio+checksum": 0.9462,
+    "test/regex_fallback": 0.6923
+  }
+}

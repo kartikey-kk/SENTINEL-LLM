@@ -1,0 +1,107 @@
+{
+  "kind": "experiment_hybrid",
+  "created_at": "2026-11-07T09:17:35.398580+00:00",
+  "environment": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26300-SP0",
+    "processor": "Intel64 Family 6 Model 151 Stepping 2, GenuineIntel",
+    "torch": "2.15.0+cpu",
+    "transformers": "5.22.2",
+    "device": "cpu"
+  },
+  "title": "Exp 3 - Hybrid detector comparison",
+  "description": "Derived from firewall_comparison_20261107T091714Z.json: identical 991 held-out samples and models. Per-category columns are block rates (recall on attack categories).",
+  "columns": [
+    "recall_prompt_injection",
+    "recall_jailbreak",
+    "recall_indirect_injection",
+    "recall_secret",
+    "recall_toxicity",
+    "recall_unseen",
+    "fpr",
+    "fpr_unseen",
+    "f1",
+    "p95_ms"
+  ],
+  "configs": [
+    {
+      "name": "rules",
+      "metrics": {
+        "recall_prompt_injection": 0.4052,
+        "recall_jailbreak": 0.5439,
+        "recall_indirect_injection": 0.5455,
+        "recall_secret": 1.0,
+        "recall_toxicity": 0.0,
+        "fpr": 0.0118,
+        "f1": 0.6734,
+        "p95_ms": 163.11,
+        "recall_unseen": 0.4955,
+        "fpr_unseen": 0.0258
+      }
+    },
+    {
+      "name": "ML",
+      "metrics": {
+        "recall_prompt_injection": 0.8966,
+        "recall_jailbreak": 0.9958,
+        "recall_indirect_injection": 0.8144,
+        "recall_secret": 1.0,
+        "recall_toxicity": 0.9524,
+        "fpr": 0.1062,
+        "f1": 0.9225,
+        "p95_ms": 2389.46,
+        "recall_unseen": 0.8591,
+        "fpr_unseen": 0.2258
+      }
+    },
+    {
+      "name": "rules+ML",
+      "metrics": {
+        "recall_prompt_injection": 0.5948,
+        "recall_jailbreak": 0.7113,
+        "recall_indirect_injection": 0.8485,
+        "recall_secret": 1.0,
+        "recall_toxicity": 0.9524,
+        "fpr": 0.0855,
+        "f1": 0.8418,
+        "p95_ms": 2360.08,
+        "recall_unseen": 0.7841,
+        "fpr_unseen": 0.1871
+      }
+    },
+    {
+      "name": "rules+ML+verification",
+      "metrics": {
+        "recall_prompt_injection": 0.75,
+        "recall_jailbreak": 0.9247,
+        "recall_indirect_injection": 0.8485,
+        "recall_secret": 1.0,
+        "recall_toxicity": 0.8095,
+        "fpr": 0.0855,
+        "f1": 0.9034,
+        "p95_ms": 2872.38,
+        "recall_unseen": 0.8318,
+        "fpr_unseen": 0.1871
+      }
+    }
+  ],
+  "source_run": "firewall_comparison_20261107T091714Z.json",
+  "summary": {
+    "rules": {
+      "f1": 0.6734,
+      "fpr": 0.0118
+    },
+    "ML": {
+      "f1": 0.9225,
+      "fpr": 0.1062
+    },
+    "rules+ML": {
+      "f1": 0.8418,
+      "fpr": 0.0855
+    },
+    "rules+ML+verification": {
+      "f1": 0.9034,
+      "fpr": 0.0855
+    }
+  }
+}

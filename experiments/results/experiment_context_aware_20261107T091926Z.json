@@ -1,0 +1,81 @@
+{
+  "kind": "experiment_context_aware",
+  "created_at": "2026-11-07T09:19:26.760104+00:00",
+  "environment": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26300-SP0",
+    "processor": "Intel64 Family 6 Model 151 Stepping 2, GenuineIntel",
+    "torch": "2.15.0+cpu",
+    "transformers": "5.22.2",
+    "device": "cpu"
+  },
+  "title": "Exp 1 - Context-aware risk aggregation",
+  "description": "Fixed thresholds vs application-context profiles (bounded multipliers). Security-research scenario uses 30 benign security-education prompts; customer-support uses 150 Dolly prompts; both use 143 held-out attacks from unseen sources. Hybrid + selective verification in all configs.",
+  "columns": [
+    "benign_fpr",
+    "attack_recall",
+    "n_benign",
+    "n_attacks",
+    "verifier_calls"
+  ],
+  "configs": [
+    {
+      "name": "security_research_app | fixed",
+      "metrics": {
+        "benign_fpr": 0.1,
+        "attack_recall": 0.7902,
+        "n_benign": 30,
+        "n_attacks": 143,
+        "verifier_calls": 60
+      }
+    },
+    {
+      "name": "security_research_app | profile:security_research",
+      "metrics": {
+        "benign_fpr": 0.0667,
+        "attack_recall": 0.7832,
+        "n_benign": 30,
+        "n_attacks": 143,
+        "verifier_calls": 64
+      }
+    },
+    {
+      "name": "customer_support_app | fixed",
+      "metrics": {
+        "benign_fpr": 0.0,
+        "attack_recall": 0.7902,
+        "n_benign": 150,
+        "n_attacks": 143,
+        "verifier_calls": 45
+      }
+    },
+    {
+      "name": "customer_support_app | profile:customer_support",
+      "metrics": {
+        "benign_fpr": 0.0,
+        "attack_recall": 0.9231,
+        "n_benign": 150,
+        "n_attacks": 143,
+        "verifier_calls": 2
+      }
+    }
+  ],
+  "summary": {
+    "security_research_app | fixed": {
+      "fpr": 0.1,
+      "recall": 0.7902
+    },
+    "security_research_app | profile:security_research": {
+      "fpr": 0.0667,
+      "recall": 0.7832
+    },
+    "customer_support_app | fixed": {
+      "fpr": 0.0,
+      "recall": 0.7902
+    },
+    "customer_support_app | profile:customer_support": {
+      "fpr": 0.0,
+      "recall": 0.9231
+    }
+  }
+}

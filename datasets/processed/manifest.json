@@ -1,0 +1,74 @@
+{
+  "name": "sentinel_eval_v1.1",
+  "seed": 1337,
+  "changelog": "v1.1: fixed synthetic credit-card generation (v1 joined slices of different numbers, so most were not Luhn-valid)",
+  "n_samples": 1529,
+  "duplicates_removed": 188,
+  "splits": {
+    "test": 991,
+    "validation": 238,
+    "train": 300
+  },
+  "by_category": {
+    "test": {
+      "prompt_injection": 116,
+      "jailbreak": 239,
+      "benign": 203,
+      "pii": 50,
+      "secret": 12,
+      "toxicity": 21,
+      "benign_context": 86,
+      "indirect_injection": 264
+    },
+    "validation": {
+      "prompt_injection": 40,
+      "jailbreak": 27,
+      "benign": 107,
+      "pii": 40,
+      "secret": 18,
+      "benign_context": 3,
+      "indirect_injection": 3
+    },
+    "train": {
+      "prompt_injection": 36,
+      "jailbreak": 3,
+      "benign": 185,
+      "pii": 30,
+      "secret": 30,
+      "toxicity": 9,
+      "benign_context": 1,
+      "indirect_injection": 6
+    }
+  },
+  "by_source": {
+    "test": {
+      "synthetic": 225,
+      "injecagent": 330,
+      "agentdojo": 7,
+      "garak_dan": 14,
+      "garak_sysprompt": 28,
+      "garak_inthewild": 198,
+      "garak_normal": 5,
+      "dolly": 184
+    },
+    "validation": {
+      "synthetic": 135,
+      "dolly": 103
+    },
+    "train": {
+      "synthetic": 138,
+      "dolly": 162
+    }
+  },
+  "groups": 842,
+  "family_split_overlap": 0,
+  "sha256": "eb05393d6ce1fea6398fc0e64cbd59ea512cc43e8b7bc07927595e19ef8cc4c5",
+  "licenses": {
+    "synthetic": "project (MIT)",
+    "injecagent": "MIT",
+    "agentdojo": "MIT",
+    "garak_*": "Apache-2.0",
+    "dolly": "CC BY-SA 3.0 (attribution: Databricks)"
+  },
+  "notes": "seen_risk=true marks sources that public detection models may have been trained on."
+}

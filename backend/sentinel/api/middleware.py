@@ -13,6 +13,7 @@ from starlette.types import ASGIApp, Message, Receive, Scope, Send
 from sentinel.audit.service import AuditError
 from sentinel.detection.normalizer import InputValidationError
 from sentinel.engine.policy_engine import PolicyValidationError
+from sentinel.engine.proxy import ProxyError
 from sentinel.providers.base import ProviderError
 
 logger = logging.getLogger("sentinel.api")
@@ -25,9 +26,10 @@ def new_request_id() -> str:
 class RequestContextMiddleware:
     """Assigns a server-generated request ID and enforces a maximum body size."""
 
-    def __init__(self, app: ASGIApp, max_body_bytes: int) -> None:
+    def __init__(self, app: ASGIApp, max_body_bytes: int, path_limits: dict[str, int] | None = None) -> None:
         self.app = app
         self.max_body_bytes = max_body_bytes
+        self.path_limits = path_limits or {}  # path prefix -> limit (e.g. larger chat histories on /v1/)
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         if scope["type"] != "http":
@@ -35,11 +37,13 @@ class RequestContextMiddleware:
             return
         request_id = new_request_id()
         scope.setdefault("state", {})["request_id"] = request_id
+        path = scope.get("path", "")
+        limit = next((v for prefix, v in self.path_limits.items() if path.startswith(prefix)), self.max_body_bytes)
 
         headers = dict(scope.get("headers") or [])
         declared = headers.get(b"content-length")
-        if declared is not None and declared.isdigit() and int(declared) > self.max_body_bytes:
-            await _send_json(send, 413, "request_too_large", f"Request body exceeds {self.max_body_bytes} bytes", request_id)
+        if declared is not None and declared.isdigit() and int(declared) > limit:
+            await _send_json(send, 413, "request_too_large", f"Request body exceeds {limit} bytes", request_id)
             return
 
         received = 0
@@ -50,7 +54,7 @@ class RequestContextMiddleware:
             message = await receive()
             if message["type"] == "http.request":
                 received += len(message.get("body", b""))
-                if received > self.max_body_bytes:
+                if received > limit:
                     too_large = True
                     raise _BodyTooLarge()
             return message
@@ -64,7 +68,7 @@ class RequestContextMiddleware:
                 if not replaced:
                     replaced = True
                     await _send_json(send, 413, "request_too_large",
-                                     f"Request body exceeds {self.max_body_bytes} bytes", request_id)
+                                     f"Request body exceeds {limit} bytes", request_id)
                 return
             if message["type"] == "http.response.start":
                 hdrs = list(message.get("headers", []))
@@ -82,7 +86,7 @@ class RequestContextMiddleware:
             await self.app(scope, limited_receive, send_with_headers)
         except _BodyTooLarge:
             if not replaced:
-                await _send_json(send, 413, "request_too_large", f"Request body exceeds {self.max_body_bytes} bytes", request_id)
+                await _send_json(send, 413, "request_too_large", f"Request body exceeds {limit} bytes", request_id)
 
 
 class _BodyTooLarge(Exception):
@@ -135,6 +139,13 @@ def install_error_handlers(app: FastAPI) -> None:
     @app.exception_handler(ProviderError)
     async def _provider(request: Request, exc: ProviderError) -> JSONResponse:
         return _error(request, exc.status, exc.code, exc.message)
+
+    @app.exception_handler(ProxyError)
+    async def _proxy(request: Request, exc: ProxyError) -> JSONResponse:
+        # OpenAI's error shape, so OpenAI SDKs raise their usual exception types.
+        return JSONResponse(status_code=exc.status, content={"error": {
+            "message": exc.message, "type": exc.type, "param": exc.param, "code": exc.code,
+            "request_id": request_id_of(request)}})
 
     @app.exception_handler(AuditError)
     async def _audit(request: Request, exc: AuditError) -> JSONResponse:

@@ -62,9 +62,9 @@
   },
   "groups": 842,
   "family_split_overlap": 0,
-  "sha256": "eb05393d6ce1fea6398fc0e64cbd59ea512cc43e8b7bc07927595e19ef8cc4c5",
+  "sha256": "63d7b6e0c79d398c46a37e102487f11aa385b53ecdf684d6059da25d611006e3",
   "licenses": {
-    "synthetic": "project (MIT)",
+    "synthetic": "project (Apache-2.0)",
     "injecagent": "MIT",
     "agentdojo": "MIT",
     "garak_*": "Apache-2.0",

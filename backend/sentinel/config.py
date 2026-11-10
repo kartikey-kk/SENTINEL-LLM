@@ -10,6 +10,7 @@ from __future__ import annotations
 import os
 from functools import lru_cache
 from pathlib import Path
+from typing import Literal
 
 from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -89,6 +90,24 @@ class Settings(BaseSettings):
     provider_max_retries: int = Field(default=2, ge=0, le=5)
     allow_cloud_fallback: bool = False
 
+    # --- OpenAI-compatible proxy (/v1) ---
+    proxy_enabled: bool = True
+    # Callers may send their own provider key (Authorization: Bearer ...); it is forwarded, never stored.
+    proxy_allow_byok: bool = True
+    # Named upstreams callers can select with X-Sentinel-Upstream. Only these URLs are ever contacted
+    # (callers cannot supply a URL, which would turn the proxy into an SSRF relay).
+    proxy_upstreams: str = (
+        "openai=https://api.openai.com/v1,"
+        "groq=https://api.groq.com/openai/v1,"
+        "openrouter=https://openrouter.ai/api/v1,"
+        "gemini=https://generativelanguage.googleapis.com/v1beta/openai"
+    )
+    proxy_default_upstream: str = "openai"
+    # How a blocked request is returned: "message" = a normal completion with finish_reason
+    # "content_filter" (apps keep working); "error" = HTTP 400 in OpenAI's error format.
+    proxy_block_mode: Literal["message", "error"] = "message"
+    proxy_max_request_bytes: int = Field(default=1_000_000, ge=1024, le=20_000_000)
+
     # --- CORS (dashboard dev server) ---
     cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
 
@@ -112,6 +131,21 @@ class Settings(BaseSettings):
         if self.cloud_default_model and self.cloud_default_model not in models:
             models.insert(0, self.cloud_default_model)
         return models
+
+    @property
+    def proxy_upstream_map(self) -> dict[str, str]:
+        """Parse `name=url,...`. Only https URLs (or http on localhost / Docker host) are accepted."""
+        out: dict[str, str] = {}
+        for item in self.proxy_upstreams.split(","):
+            name, sep, url = item.strip().partition("=")
+            name, url = name.strip().lower(), url.strip().rstrip("/")
+            if not sep or not name or not url:
+                continue
+            host = url.split("://", 1)[-1].split("/", 1)[0].split(":", 1)[0]
+            local = host in ("localhost", "127.0.0.1", "host.docker.internal")
+            if url.startswith("https://") or (url.startswith("http://") and local):
+                out[name] = url
+        return out
 
     @property
     def admin_key_configured(self) -> bool:

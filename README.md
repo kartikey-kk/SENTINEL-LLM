@@ -12,7 +12,8 @@ jailbreaks, hides personal data, stops leaked API keys, and keeps a log of every
 ![React](https://img.shields.io/badge/React-console-61DAFB?logo=react&logoColor=black)
 ![Docker](https://img.shields.io/badge/Docker-compose-2496ED?logo=docker&logoColor=white)
 ![Ollama](https://img.shields.io/badge/Ollama-local%20LLM-000000)
-![Tests](https://img.shields.io/badge/tests-122%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-137%20passing-brightgreen)
+![License](https://img.shields.io/badge/license-Apache%202.0-blue)
 
 </div>
 
@@ -137,6 +138,21 @@ curl -s http://localhost:8000/api/v1/chat -H "content-type: application/json" \
 For RAG, pass retrieved documents as `context`. For agents, check tool calls with
 `/api/v1/inspect/tool`. Everything is documented in [docs/API.md](docs/API.md).
 
+## Put it in front of any app (drop-in proxy)
+
+Already using the OpenAI SDK, LangChain, or anything with an OpenAI-style API? Change one line and every
+call goes through SentinelLLM. The app keeps its own provider key, and SentinelLLM forwards it without
+storing it:
+
+```python
+from openai import OpenAI
+client = OpenAI(base_url="http://localhost:8000/v1", api_key="sk-...your own key...")
+```
+
+It works with OpenAI, Groq, OpenRouter, Gemini, or `model="ollama/qwen2.5:3b"` for a fully local model.
+Prompts, tool results and answers are all checked; blocked requests come back as a normal reply with
+`finish_reason: "content_filter"`. Details are in [docs/PROXY.md](docs/PROXY.md).
+
 ## The dashboard
 
 | Page | What you can do there |
@@ -202,7 +218,11 @@ docs/               architecture, API, deployment and evaluation guides
 - 📊 [Evaluation](docs/EVALUATION.md): datasets, metrics, experiments and limitations
 - 📋 [Development status](DEVELOPMENT_STATUS.md): what's done, test results, what's next
 
-## Data and model licenses
+## License
+
+SentinelLLM is licensed under the [Apache License 2.0](LICENSE). Copyright 2026 Kartikey Kumar.
+
+### Data and model licenses
 
 The evaluation data keeps its original licenses: InjecAgent (MIT), AgentDojo (MIT), garak
 (Apache-2.0) and Databricks Dolly-15k (CC BY-SA 3.0). It is downloaded locally by the scripts in

@@ -18,7 +18,7 @@ from sqlalchemy import select
 
 from sentinel import __version__
 from sentinel.api.middleware import RequestContextMiddleware, install_error_handlers
-from sentinel.api.routes import admin, inspect, system
+from sentinel.api.routes import admin, inspect, proxy, system
 from sentinel.audit.service import AuditService
 from sentinel.config import Settings, configure_hf_home, get_settings
 from sentinel.db.models import ModelProvider
@@ -33,6 +33,7 @@ from sentinel.detection.secret_detector import SecretDetector
 from sentinel.detection.toxicity_detector import ToxicityDetector
 from sentinel.detection.verifier import LLMVerifier
 from sentinel.engine.pipeline import SentinelPipeline
+from sentinel.engine.proxy import ChatProxy
 from sentinel.engine.policy_engine import PolicyStore
 from sentinel.providers.router import ProviderRouter
 from sentinel.security.kv_store import KVStore, build_store
@@ -54,6 +55,7 @@ class AppContext:
     tool_guard: ToolGuard
     audit: AuditService
     pipeline: SentinelPipeline
+    proxy: ChatProxy
 
 
 async def build_context(settings: Settings, *, load_models: bool = True) -> AppContext:
@@ -93,7 +95,8 @@ async def build_context(settings: Settings, *, load_models: bool = True) -> AppC
     )
     await _sync_providers(db, router, settings)
     return AppContext(settings=settings, db=db, store=store, registry=registry, pii=pii, policy_store=policy_store,
-                      router=router, tool_guard=tool_guard, audit=audit, pipeline=pipeline)
+                      router=router, tool_guard=tool_guard, audit=audit, pipeline=pipeline,
+                      proxy=ChatProxy(settings, pipeline))
 
 
 async def _sync_providers(db: Database, router: ProviderRouter, settings: Settings) -> None:
@@ -146,6 +149,7 @@ def create_app(settings: Settings | None = None, *, load_models: bool = True) ->
             with contextlib.suppress(asyncio.CancelledError):
                 await task  # let in-flight DB work unwind before disposing the engine
             await ctx.router.aclose()
+            await ctx.proxy.aclose()
             await ctx.store.close()
             await ctx.db.dispose()
 
@@ -162,11 +166,13 @@ def create_app(settings: Settings | None = None, *, load_models: bool = True) ->
     if origins:
         app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["GET", "POST", "PUT"],
                            allow_headers=["Content-Type", "X-API-Key", "Authorization"], expose_headers=["X-Request-ID"])
-    app.add_middleware(RequestContextMiddleware, max_body_bytes=settings.max_request_bytes)
+    app.add_middleware(RequestContextMiddleware, max_body_bytes=settings.max_request_bytes,
+                       path_limits={"/v1/": settings.proxy_max_request_bytes})
     install_error_handlers(app)
     app.include_router(system.router)
     app.include_router(inspect.router)
     app.include_router(admin.router)
+    app.include_router(proxy.router)
     return app
 
 

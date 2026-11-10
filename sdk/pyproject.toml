@@ -7,6 +7,7 @@ name = "sentinelllm"
 version = "0.1.0"
 description = "Python SDK for the SentinelLLM LLM firewall"
 requires-python = ">=3.9"
+license = {text = "Apache-2.0"}
 dependencies = ["httpx>=0.25"]
 
 [project.optional-dependencies]

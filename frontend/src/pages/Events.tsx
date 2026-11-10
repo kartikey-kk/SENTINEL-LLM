@@ -146,7 +146,7 @@ export default function Events() {
           </div>
           {sel(decision, setDecision, ["ALLOW", "REDACT", "HUMAN_REVIEW", "BLOCK"], "Decision")}
           {sel(severity, setSeverity, ["none", "low", "medium", "high", "critical"], "Severity")}
-          {sel(eventType, setEventType, ["chat", "input", "output", "context", "tool"], "Type")}
+          {sel(eventType, setEventType, ["chat", "proxy", "input", "output", "context", "tool"], "Type")}
           {sel(category, setCategory, ["prompt_injection", "jailbreak", "pii", "secret", "toxicity", "indirect_injection", "tool_abuse"], "Category")}
           {sel(review, setReview, ["pending", "true_positive", "false_positive", "approved", "rejected"], "Review")}
         </form>

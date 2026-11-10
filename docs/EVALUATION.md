@@ -13,7 +13,7 @@ measured (for example a real cloud provider without an API key), that is stated 
 ```json
 {"id": "SLLM-00001", "text": "…", "category": "prompt_injection", "label": 1, "severity": "high",
  "expected_action": "block", "stage": "input", "family": "ignore_previous", "group": "synthetic:ignore_previous",
- "source": "synthetic", "license": "project (MIT)", "split": "test", "seen_risk": false}
+ "source": "synthetic", "license": "project (Apache-2.0)", "split": "test", "seen_risk": false}
 ```
 
 | Source | License | Used as | Notes |
@@ -24,7 +24,7 @@ measured (for example a real cloud provider without an API key), that is stated 
 | garak `inthewild_jailbreak_llms.json` | Apache-2.0 (garak) | In-the-wild jailbreaks (200 sampled) | `seen_risk`: public classifiers were likely trained on this data |
 | garak `sysprompt_extraction/attacks.json` | Apache-2.0 | System-prompt extraction attempts | |
 | Databricks Dolly-15k | CC BY-SA 3.0 | Benign instructions (450 sampled) | `seen_risk` (widely used instruction data) |
-| Synthetic (this project) | MIT | Injection families (+5 obfuscations each), jailbreak families, benign hard negatives, PII with ground-truth values (Luhn/Verhoeff/IBAN-valid), secrets vs documentation placeholders, toxicity, poisoned documents, canary attacks | Generated with seed 1337 |
+| Synthetic (this project) | Apache-2.0 | Injection families (+5 obfuscations each), jailbreak families, benign hard negatives, PII with ground-truth values (Luhn/Verhoeff/IBAN-valid), secrets vs documentation placeholders, toxicity, poisoned documents, canary attacks | Generated with seed 1337 |
 
 ### Splits and leakage control
 
@@ -99,7 +99,7 @@ python -c "from huggingface_hub import hf_hub_download as d; d('databricks/datab
 
 **Environment:** Windows 11, Intel i5-12450HX (8 cores), 16 GB RAM. Detectors run on CPU (torch 2.15 CPU,
 transformers 5.22). Ollama on an RTX 3050 6 GB laptop GPU: `qwen2.5:3b` is the target model and
-`qwen3:4b-instruct` the verifier. Dataset `sentinel_eval_v1.1`, test split, sha256 `eb05393d…`.
+`qwen3:4b-instruct` the verifier. Dataset `sentinel_eval_v1.1`, test split, sha256 `eb05393d…` at evaluation time. The project was later relicensed under Apache-2.0, which changed only the `license` label of the synthetic samples (all 1,529 texts, ids and splits are identical), so rebuilding the dataset now gives sha256 `63d7b6e0…`.
 
 ### 5.1 End-to-end firewall comparison
 

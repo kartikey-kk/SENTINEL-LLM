@@ -74,7 +74,7 @@ HELD_OUT = "test"
 
 
 # ============================================================================ synthetic generators
-SYN = dict(source="synthetic", license="project (MIT)")
+SYN = dict(source="synthetic", license="project (Apache-2.0)")
 
 TASKS = ["summarize this article", "translate the text to French", "answer the customer's question", "write a product description",
          "classify the sentiment", "help me plan a trip", "fix this Python bug", "draft an email to my team"]
@@ -558,7 +558,7 @@ def main() -> int:
         "by_category": counts("category"), "by_source": counts("source"),
         "groups": len(group_splits), "family_split_overlap": fam_overlap,
         "sha256": hashlib.sha256((OUT / "sentinel_eval_v1.jsonl").read_bytes()).hexdigest(),
-        "licenses": {"synthetic": "project (MIT)", "injecagent": "MIT", "agentdojo": "MIT", "garak_*": "Apache-2.0",
+        "licenses": {"synthetic": "project (Apache-2.0)", "injecagent": "MIT", "agentdojo": "MIT", "garak_*": "Apache-2.0",
                      "dolly": "CC BY-SA 3.0 (attribution: Databricks)"},
         "notes": "seen_risk=true marks sources that public detection models may have been trained on.",
     }

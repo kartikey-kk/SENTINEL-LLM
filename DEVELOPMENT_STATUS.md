@@ -15,14 +15,15 @@ _Last updated: 2026-11-07_
 | 6 | React console: overview, inspector, analytics, event explorer, policies, models | done | `frontend/` |
 | 7 | Unified dataset + leak-free splits, firewall/detector evaluation, latency benchmark, 3 experiments, sklearn baseline | done | `experiments/`, `datasets/processed/` |
 | 8 | Dockerfiles, Compose (CPU/GPU), docs, acceptance script | done | `docker-compose*.yml`, `docs/`, `scripts/` |
+| + | OpenAI-compatible drop-in proxy (`/v1/chat/completions`, `/v1/models`): bring-your-own-key, named upstream allowlist, streaming, tool-output scanning | done | `backend/sentinel/engine/proxy.py`, `docs/PROXY.md` |
 
 ## Test results
 
 | Suite | Result | Command |
 |---|---|---|
-| Backend unit + API tests (fake providers, no ML) | 110 passed | `cd backend && .venv/Scripts/python -m pytest -m "not ml and not ollama"` |
+| Backend unit + API tests (fake providers, no ML) | 125 passed (incl. 15 proxy tests) | `cd backend && .venv/Scripts/python -m pytest -m "not ml and not ollama"` |
 | Backend ML tests (real classifiers + Presidio) | 12 passed | `pytest -m ml` |
-| **Backend total** | **122 passed** | `pytest -m "not ollama"` |
+| **Backend total** | **137 passed** | `pytest -m "not ollama"` |
 | SDK tests | 5 passed, 1 skipped (live test needs `SENTINEL_SDK_LIVE_URL`) | `pytest sdk/tests` |
 | Type checking | mypy: no issues in 48 files · `tsc --noEmit`: no errors | `mypy sentinel --ignore-missing-imports`, `npm run typecheck` |
 | Alembic | upgrade + `alembic check` clean (SQLite); upgrade applied on PostgreSQL 16 in Docker | |
@@ -81,6 +82,8 @@ The evaluation results are in `docs/EVALUATION.md` and the generated tables in `
 * **Tools are simulated.** No real side-effecting tools are executed by design.
 
 ## Next implementation steps
+
+0. Multi-customer hosting for the proxy: per-customer policies and audit views, key management in the dashboard, usage quotas.
 
 1. Fine-tune or replace the jailbreak classifier, and calibrate classifier probabilities (temperature
    scaling) on the validation split.

@@ -7,6 +7,7 @@ Interactive OpenAPI docs: `http://localhost:8000/docs` (also proxied by the cons
 * **Authentication.** `X-API-Key: <key>` or `Authorization: Bearer <key>`.
   * *Client* endpoints (inspect, chat, models) accept a client key from `SENTINEL_CLIENT_API_KEYS`, and require one only when `SENTINEL_REQUIRE_CLIENT_AUTH=true`. The admin key is also accepted.
   * *Admin* endpoints (events, metrics, policies, evaluations, tool approvals) require `SENTINEL_ADMIN_API_KEY`. If it is not configured they return `503` (fail closed).
+* **Proxy endpoints (`/v1`)** follow OpenAI's conventions instead. `Authorization: Bearer` carries the caller's own provider key, and the SentinelLLM key goes in `X-Sentinel-Key`. Errors use OpenAI's `{"error": {"message", "type", "param", "code"}}` shape. See [PROXY.md](PROXY.md).
 * **Request IDs.** Every response carries a server-generated `X-Request-ID` (`req_…`), which also appears in bodies and audit records.
 * **Limits.** The body size limit is `SENTINEL_MAX_REQUEST_BYTES` (413). Text length is limited by `SENTINEL_MAX_INPUT_CHARS` (413). The rate limit is `SENTINEL_RATE_LIMIT_PER_MINUTE` per client key or IP (429 with `Retry-After`).
 * **Errors** are always `{"error": {"code", "message", "request_id", ...}}`. Validation errors list `loc`/`msg` but never echo submitted values. Internal exceptions return `internal_error` without traces.
@@ -30,6 +31,8 @@ Interactive OpenAPI docs: `http://localhost:8000/docs` (also proxied by the cons
 | GET | `/api/v1/policies/{policy_id}` | admin | One section |
 | PUT | `/api/v1/policies/{policy_id}` | admin | Replace one section: `{"value": …, "comment": "…"}` |
 | GET | `/api/v1/evaluations` | admin | Stored evaluation and experiment results |
+| POST | `/v1/chat/completions` | proxy | OpenAI-compatible drop-in proxy, with optional streaming; see [PROXY.md](PROXY.md) |
+| GET | `/v1/models` | proxy | Models reachable through the proxy |
 | GET | `/api/v1/health` | none | Component health (no secrets) |
 | GET | `/api/v1/models` | client | Providers, classifiers, verifier, observed latency |
 
